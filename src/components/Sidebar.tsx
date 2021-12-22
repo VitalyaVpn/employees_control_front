@@ -1,26 +1,26 @@
-import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import {Avatar, Stack} from "@mui/material";
-import SettingsIcon from '@mui/icons-material/Settings';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
-import Button from '@mui/material/Button';
-import SettingTable from "./SettingTable";
+import * as React from 'react'
+import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles'
+import Box from '@mui/material/Box'
+import MuiDrawer from '@mui/material/Drawer'
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import List from '@mui/material/List'
+import CssBaseline from '@mui/material/CssBaseline'
+import Typography from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import MenuIcon from '@mui/icons-material/Menu'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import {Avatar, Stack} from "@mui/material"
+import SettingsIcon from '@mui/icons-material/Settings'
+import TaskAltIcon from '@mui/icons-material/TaskAlt'
+import QueryStatsIcon from '@mui/icons-material/QueryStats'
+import Button from '@mui/material/Button'
+import GroupIcon from '@mui/icons-material/Group'
 
 const drawerWidth = 240;
 
@@ -95,15 +95,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Sidebar() {
-    const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+    const theme = useTheme()
+    const [open, setOpen] = React.useState(false)
 
     const handleDrawerOpen = () => {
-        setOpen(true);
+        setOpen(true)
     };
 
     const handleDrawerClose = () => {
-        setOpen(false);
+        setOpen(false)
     };
 
     return (
@@ -140,10 +140,10 @@ export default function Sidebar() {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Настройка задач', 'Текущие задачи', 'Статистика'].map((text, index) => (
+                    {['Настройка задач', 'Текущие задачи', 'Статистика', 'Работники'].map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemIcon>
-                                {index === 0 ? <SettingsIcon /> : index  === 1 ? <TaskAltIcon /> : <QueryStatsIcon />}
+                                {index === 0 ? <SettingsIcon /> : index  === 1 ? <TaskAltIcon /> : index  === 2 ? <QueryStatsIcon /> : <GroupIcon />}
                             </ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>

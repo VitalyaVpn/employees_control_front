@@ -1,6 +1,6 @@
 import React from "react"
-import Sidebar from "../components/Sidebar";
-import SettingTable from "../components/SettingTable";
+import Sidebar from "../components/Sidebar"
+import SettingTable from "../components/SettingTable"
 
 
 const Settings: React.FC = () => {

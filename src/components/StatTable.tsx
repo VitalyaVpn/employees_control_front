@@ -1,29 +1,29 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import * as React from 'react'
+import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
+import IconButton from '@mui/material/IconButton'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 function createData(
     name: string,
-    currentTime: string,
-    start: string,
-    end: string,
-    currentTask: string,
+    isOnline: boolean,
+    start: string | null,
+    end: string | null,
+    currentTask: string | null,
     tasksAmount: number,
 ) {
     return {
         name,
-        currentTime,
+        isOnline,
         start,
         end,
         currentTask,
@@ -46,8 +46,8 @@ function createData(
 }
 
 function Row(props: { row: ReturnType<typeof createData> }) {
-    const { row } = props;
-    const [open, setOpen] = React.useState(false);
+    const { row } = props
+    const [open, setOpen] = React.useState(false)
 
     return (
         <React.Fragment>
@@ -64,10 +64,10 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                 <TableCell component="th" scope="row">
                     {row.name}
                 </TableCell>
-                <TableCell align="right">{row.currentTime}</TableCell>
-                <TableCell align="right">{row.start}</TableCell>
-                <TableCell align="right">{row.end}</TableCell>
-                <TableCell align="right">{row.currentTask}</TableCell>
+                <TableCell align="right">{row.isOnline ? 'Да' : 'Нет'}</TableCell>
+                <TableCell align="right">{row.start ? row.start : 'Не на смене'}</TableCell>
+                <TableCell align="right">{row.end ? row.end : row.start ? 'Смена не окончена' : 'Не на смене'}</TableCell>
+                <TableCell align="right">{row.currentTask ? row.currentTask : 'Нет активных задач'}</TableCell>
                 <TableCell align="right" sx={{pr: 5}}>{row.tasksAmount}</TableCell>
             </TableRow>
             <TableRow>
@@ -108,11 +108,11 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 }
 
 const rows = [
-    createData('Работник 1', '159', '6.0', '24', '4.0', 2),
-    createData('Работник 2', '237', '9.0', '37', '4.3', 3),
-    createData('Работник 3', '262', '16.0', '24', '6.0', 1),
-    createData('Работник 4', '305', '3.7', '67', '4.3', 1),
-    createData('Работник 5', '356', '16.0', '49', '3.9', 2),
+    createData('Работник 1', false, '2020-01-05 14:13', null, null, 0),
+    createData('Работник 2', true, '2020-01-05 14:13', '2020-01-05 17:13', 'Задача 56', 3),
+    createData('Работник 3', false, null, null, 'Задача 5', 1),
+    createData('Работник 4', false, '2020-01-05 14:13', '2020-01-05 17:13', null, 0),
+    createData('Работник 5', true, '2020-01-05 14:13', null, 'Задача 23', 2),
 ];
 
 export default function StatTable() {
