@@ -18,7 +18,10 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import {getUsers} from "../firebase/firebase";
-import {UserInDb} from "../types";
+import {IUser} from "../types";
+import {useAppDispatch, useAppSelector} from "../hooks/redux";
+import employeeReducer from "../store/reducers/EmployeeSlice";
+import {fetchEmployee} from "../store/reducers/ActionCreators";
 
 function stringToColor(string: string) {
     let hash = 0;
@@ -48,21 +51,14 @@ function stringAvatar(name: string) {
 }
 
 const EmployeeTable:React.FC = () => {
-
+    const dispatch = useAppDispatch()
+    const {employee} = useAppSelector(state => state.employeeReducer)
     React.useEffect(()=> {
-        const foo = async () => {
-            const data = await getUsers()
-            const user = data as Array<UserInDb>
-            setData([...user])
-            setDeleteOpen([...user.map(() => {
-                return false
-            })])
-        }
-        foo()
+        dispatch(fetchEmployee())
 
     }, [])
 
-    const [data, setData] = React.useState<UserInDb[] | undefined>(undefined)
+    //const [data, setData] = React.useState<IUser[] | undefined>(undefined)
     const [open, setOpen] = React.useState(false)
     const [deleteOpen, setDeleteOpen] = React.useState<boolean[]>([false])
     const [hover, setHover] = React.useState([false])
@@ -109,7 +105,7 @@ const EmployeeTable:React.FC = () => {
     return (
         <Box sx={{width: '100%', paddingTop: '70px'}}>
             <List>
-                {data && data.map((employee, index)=>{
+                {employee && employee.map((employee, index)=>{
                     return (
                         <ListItem
                             secondaryAction={

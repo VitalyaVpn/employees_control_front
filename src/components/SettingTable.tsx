@@ -12,27 +12,21 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import StarBorder from '@mui/icons-material/StarBorder'
 import {Button, Typography} from "@mui/material"
 import AddIcon from '@mui/icons-material/Add'
-import {getData} from "../firebase/firebase"
-import {User} from "../types"
+import {getTasks} from "../firebase/firebase"
+import {ITasks} from "../types"
 import Box from '@mui/material/Box'
+import {useAppDispatch, useAppSelector} from "../hooks/redux";
+import {fetchTasks} from "../store/reducers/ActionCreators";
 
 
 
 const SettingTable:React.FC = () => {
-
+    const dispatch = useAppDispatch()
+    const {tasks} = useAppSelector(state => state.tasksReducer)
     React.useEffect(() => {
-        const call =  () => {
-            const data =  getData.then((data)=> {
-                const users = data as Array<User>
-                setTasks( [...users])
-            }).catch((error)=>{
-               setTasks( [{name: 'Здесь пока никого нет'}])
-            })
-
-        }
-        call()
+        dispatch(fetchTasks())
     }, [])
-    const [tasks, setTasks] = React.useState([{} as User])
+
     const [open, setOpen] = React.useState([false, false, false])
 
     const handleClick = (index:number) => {
@@ -53,7 +47,7 @@ const SettingTable:React.FC = () => {
             }
         >
 
-            {tasks[0].name !== 'Здесь пока никого нет' ? tasks.map((employee, index) => {
+            {tasks[0] ? tasks.map((employee, index) => {
                return (
                    <div key = {employee.name}>
                        <ListItemButton onClick={() => {handleClick(index)}} key = {employee.name}>
@@ -88,7 +82,7 @@ const SettingTable:React.FC = () => {
                    </div>
                )
             }) : (<Box component="span" sx={{ p: 2 }}>
-                    <Typography variant='h5'>{tasks[0].name}</Typography>
+                    <Typography variant='h5'>{'Здесь пока ничего нет '}</Typography>
                 </Box>)}
         </List>
     )

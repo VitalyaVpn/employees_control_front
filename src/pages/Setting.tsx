@@ -1,8 +1,8 @@
 import * as React from 'react'
 import Sidebar from '../components/Sidebar'
 import SettingTable from '../components/SettingTable'
-import {getData} from "../firebase/firebase";
-import {User} from "../types";
+import {getTasks} from "../firebase/firebase";
+import {ITasks} from "../types";
 
 
 const Settings: React.FC = () => {

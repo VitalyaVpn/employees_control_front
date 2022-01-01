@@ -1,9 +1,7 @@
-// import * as firebase from "firebase/app"
-// import "firebase/firestore"
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { collection, getDoc, doc, getDocs } from 'firebase/firestore'
-import {UserInDb} from "../types";
+import {DayReview, IUser, Task} from "../types";
 
 
 const firebaseApp = initializeApp({
@@ -18,7 +16,7 @@ export const getUsers = async () => {
     return new Promise(async (resolve, reject) => {
         const userRef = collection(db, 'users')
         const userSnap  = await getDocs(userRef)
-        const arr:Array<UserInDb> = []
+        const arr:Array<IUser> = []
 
         userSnap.forEach((user)=>{
             arr.push({id: user.data()?.id, name: user.data()?.name})
@@ -31,11 +29,12 @@ export const getUsers = async () => {
     })
 }
 
-export const getData = new Promise( async (resolve, reject) => {
+export const getTasks = async  () => {
+    return new Promise( async (resolve, reject) => {
 
         const userRef = collection(db, 'users')
         const userSnap  = await getDocs(userRef)
-        const arr:Array<UserInDb> = []
+        const arr:Array<IUser> = []
 
         userSnap.forEach((user)=>{
             arr.push({id: user.data()?.id, name: user.data()?.name})
@@ -60,12 +59,13 @@ export const getData = new Promise( async (resolve, reject) => {
 
         resolve(users)
     })
+}
 
 export const getUserDay = async () => {
    return new Promise( async (resolve, reject) => {
        const userRef = collection(db, 'users')
        const userSnap  = await getDocs(userRef)
-       const arr:Array<UserInDb> = []
+       const arr:Array<IUser> = []
        userSnap.forEach((user)=>{
            arr.push({id: user.data()?.id, name: user.data()?.name})
        })
@@ -124,21 +124,5 @@ export const getUserDay = async () => {
     })
 }
 
-export interface Task  {
-    name: string
-    start: string
-    end: string
-    time: string
-    current?: boolean
-}
 
-export interface DayReview {
-    name: string
-    online: boolean
-    start: string
-    end: string
-    currentTask: string
-    tasksCount: number
-    tasks: Array<Task>
-}
 // }

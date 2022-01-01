@@ -12,9 +12,9 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import {useEffect} from "react";
-import {DayReview, db, getUserDay, Task} from "../firebase/firebase";
-import {doc, getDoc} from "firebase/firestore";
+import {DayReview, Task} from "../types";
+import {useAppDispatch, useAppSelector} from "../hooks/redux";
+import {fetchStats} from "../store/reducers/ActionCreators";
 
 function createData(
     name: string,
@@ -78,7 +78,7 @@ function Row(props: { row: DayReview }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.tasks.map((historyRow,index) => (
+                                    {row.tasks.map((historyRow:Task, index) => (
                                         <TableRow key={index}>
                                             <TableCell component="th" scope="row">
                                                 {historyRow.name}
@@ -107,18 +107,12 @@ function Row(props: { row: DayReview }) {
 // ];
 
 export default function StatTable() {
-
+    const dispatch = useAppDispatch()
+    const {stats} = useAppSelector(state => state.statsReducer)
     React.useEffect(()=> {
-        const foo = async () => {
-            const data = await getUserDay()
-
-            setData([...data as Array<DayReview>])
-        }
-        foo()
-
+        dispatch(fetchStats())
     }, [])
 
-    const [data, setData] = React.useState<DayReview[] | undefined>(undefined)
     return (
         <TableContainer component={Paper} sx={{marginTop: '70px'}}>
             <Table aria-label="collapsible table">
@@ -134,7 +128,7 @@ export default function StatTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data && data.map((row) => (
+                    {stats && stats.map((row) => (
                         <Row key={row.name} row={row} />
                     ))}
                 </TableBody>
