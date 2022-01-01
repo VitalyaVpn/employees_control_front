@@ -16,7 +16,13 @@ import {getTasks} from "../firebase/firebase"
 import {ITasks} from "../types"
 import Box from '@mui/material/Box'
 import {useAppDispatch, useAppSelector} from "../hooks/redux";
-import {fetchTasks} from "../store/reducers/ActionCreators";
+import {addTask, deleteEmployee, deleteTask, fetchTasks} from "../store/reducers/ActionCreators";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
 
 
 
@@ -33,7 +39,32 @@ const SettingTable:React.FC = () => {
         const arr = open
         open[index] = !open[index]
         setOpen([...arr])
-    };
+    }
+
+    const [openDialog, setOpenDialog] = React.useState(false)
+    const handleClose = () => {
+        setOpenDialog(false)
+    }
+    const handleOpen = () => {
+        setOpenDialog(true)
+    }
+
+    const [task, setTask] = React.useState('')
+
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=> {
+        setTask(e.target.value)
+    }
+
+    const [deleteOpen, setDeleteOpen] = React.useState<boolean[]>([false])
+    const handleDeleteClose = (index: number) => {
+        deleteOpen[index] = false
+        setDeleteOpen([...deleteOpen])
+    }
+
+    const handleDeleteOpen = (index: number) => {
+        deleteOpen[index] = true
+        setDeleteOpen([...deleteOpen])
+    }
 
     return (
         <List
@@ -61,21 +92,83 @@ const SettingTable:React.FC = () => {
                            <List component="div" disablePadding>
                            {employee.tasks?.map((task, index) => {
                                return (
-                                   <ListItem sx={{ pl: 4 }} key = {index}>
+                                   <ListItem sx={{ pl: 4 }} key = {index} button>
                                        <ListItemIcon>
                                            <StarBorder />
                                        </ListItemIcon>
                                        <ListItemText primary={task} />
-                                       <Button color='error'>Удалить</Button>
+                                       <Button color='error' onClick={()=>{handleDeleteOpen(index)}}>Удалить</Button>
+
+                                       <Dialog
+                                           open={deleteOpen[index]}
+                                           onClose={() => {handleDeleteClose(index)}}
+                                           aria-labelledby='alert-dialog-title'
+                                           aria-describedby='alert-dialog-description'
+                                       >
+                                           <DialogTitle id='alert-dialog-title'>
+                                               {'Вы уверены?'}
+                                           </DialogTitle>
+                                           <DialogContent>
+                                               <DialogContentText id='alert-dialog-description'>
+                                                   {`Это действие удалит задачу ${task}.`}
+                                               </DialogContentText>
+                                           </DialogContent>
+                                           <DialogActions>
+                                               <Button onClick={() => {handleDeleteClose(index)}}>Отмена</Button>
+                                               <Button onClick={()=> {
+                                                   dispatch(deleteTask({task, id: employee.id}))
+                                                   handleDeleteClose(index)
+                                               }}>
+                                                   Удалить
+                                               </Button>
+                                           </DialogActions>
+                                       </Dialog>
+
                                    </ListItem>
                                )
                            })}
-                               <ListItem button sx={{ pl: 4 }} key = 'add'>
+                               <ListItem button sx={{ pl: 4 }} key = 'add' onClick={handleOpen}>
                                    <ListItemIcon>
                                        <AddIcon />
                                    </ListItemIcon>
                                    <ListItemText primary='Добавить задачу' />
                                </ListItem>
+                               <Dialog
+                                   open={openDialog}
+                                   onClose={handleClose}
+                                   aria-labelledby='alert-dialog-title'
+                                   aria-describedby='alert-dialog-description'
+                               >
+                                   <DialogTitle id='alert-dialog-title'>
+                                       Новая задача
+                                   </DialogTitle>
+                                   <DialogContent>
+                                       <DialogContentText id='alert-dialog-description'>
+                                           {`Введите название задачи для ${employee.name}`}
+                                       </DialogContentText>
+                                       <TextField
+                                           autoFocus
+                                           margin='dense'
+                                           id='task'
+                                           label='Задача'
+                                           type='text'
+                                           fullWidth
+                                           variant='standard'
+                                           required
+                                           onChange={handleChange}
+                                       />
+                                   </DialogContent>
+
+                                   <DialogActions>
+                                       <Button onClick={handleClose}>Отмена</Button>
+                                       <Button onClick={()=> {
+                                           dispatch(addTask({id: employee.id, task}))
+                                           handleClose()
+                                       }}>
+                                           Добавить
+                                       </Button>
+                                   </DialogActions>
+                               </Dialog>
                            </List>
                        </Collapse>
 

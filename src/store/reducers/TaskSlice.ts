@@ -30,6 +30,28 @@ export const tasksSlice = createSlice({
             state.isLoading = false
             state.error = action.payload
         },
+        addTaskFetching(state){
+            state.isLoading = true
+        },
+        addTaskFetchingSuccess(state){
+            state.isLoading = false
+            state.error = ''
+        },
+        addTaskFetchingError(state, action: PayloadAction<string>){
+            state.isLoading = false
+            state.error = action.payload
+        },
+        deleteTaskFetching(state){
+            state.isLoading = true
+        },
+        deleteTaskFetchingSuccess(state){
+            state.isLoading = false
+            state.error = ''
+        },
+        deleteTaskFetchingError(state, action: PayloadAction<string>){
+            state.isLoading = false
+            state.error = action.payload
+        },
     }
 })
 

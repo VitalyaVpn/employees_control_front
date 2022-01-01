@@ -30,6 +30,28 @@ export const employeeSlice = createSlice({
             state.isLoading = false
             state.error = action.payload
         },
+        addEmployeeFetching(state){
+            state.isLoading = true
+        },
+        addEmployeeFetchingSuccess(state){
+            state.isLoading = false
+            state.error = ''
+        },
+        addEmployeeFetchingError(state, action: PayloadAction<string>){
+            state.isLoading = false
+            state.error = action.payload
+        },
+        deleteEmployeeFetching(state){
+            state.isLoading = true
+        },
+        deleteEmployeeFetchingSuccess(state){
+            state.isLoading = false
+            state.error = ''
+        },
+        deleteEmployeeFetchingError(state, action: PayloadAction<string>){
+            state.isLoading = false
+            state.error = action.payload
+        }
     }
 })
 

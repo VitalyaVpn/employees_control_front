@@ -1,5 +1,6 @@
 export interface ITasks {
     name: string,
+    id: string,
     tasks?: Array<string>
 }
 
@@ -24,4 +25,9 @@ export interface DayReview {
     currentTask: string
     tasksCount: number
     tasks: Array<Task>
+}
+
+export interface INewTask {
+    id: string
+    task: string
 }

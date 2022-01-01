@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { collection, getDoc, doc, getDocs } from 'firebase/firestore'
+import { collection, getDoc, doc, getDocs,setDoc } from 'firebase/firestore'
 import {DayReview, IUser, Task} from "../types";
 
 
@@ -52,6 +52,7 @@ export const getTasks = async  () => {
                 }
                 return {
                     name: user.name,
+                    id: user.id,
                     tasks: [...arr]
                 }
             })

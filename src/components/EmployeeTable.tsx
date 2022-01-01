@@ -17,11 +17,8 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
-import {getUsers} from "../firebase/firebase";
-import {IUser} from "../types";
 import {useAppDispatch, useAppSelector} from "../hooks/redux";
-import employeeReducer from "../store/reducers/EmployeeSlice";
-import {fetchEmployee} from "../store/reducers/ActionCreators";
+import {addEmployee, deleteEmployee, fetchEmployee} from "../store/reducers/ActionCreators";
 
 function stringToColor(string: string) {
     let hash = 0;
@@ -142,7 +139,10 @@ const EmployeeTable:React.FC = () => {
                                 </DialogContent>
                                 <DialogActions>
                                     <Button onClick={() => {handleDeleteClose(index)}}>Отмена</Button>
-                                    <Button onClick={() => {handleDeleteClose(index)}} autoFocus>
+                                    <Button onClick={()=> {
+                                        dispatch(deleteEmployee({name: employee.name, id: employee.id}))
+                                        handleDeleteClose(index)
+                                    }}>
                                         Удалить
                                     </Button>
                                 </DialogActions>
@@ -182,7 +182,7 @@ const EmployeeTable:React.FC = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Отмена</Button>
-                    <Button onClick={handleClose}>Добавить</Button>
+                    <Button onClick={()=> {dispatch(addEmployee({name: 'qwe', id: '565656'}))}}>Добавить</Button>
                 </DialogActions>
             </Dialog>
         </Box>
