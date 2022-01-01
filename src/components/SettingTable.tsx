@@ -10,10 +10,29 @@ import InboxIcon from '@mui/icons-material/MoveToInbox'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import StarBorder from '@mui/icons-material/StarBorder'
-import {Button} from "@mui/material"
+import {Button, Typography} from "@mui/material"
 import AddIcon from '@mui/icons-material/Add'
+import {getData} from "../firebase/firebase"
+import {User} from "../types"
+import Box from '@mui/material/Box'
 
-export default function SettingTable() {
+
+
+const SettingTable:React.FC = () => {
+
+    React.useEffect(() => {
+        const call =  () => {
+            const data =  getData.then((data)=> {
+                const users = data as Array<User>
+                setTasks( [...users])
+            }).catch((error)=>{
+               setTasks( [{name: 'Здесь пока никого нет'}])
+            })
+
+        }
+        call()
+    }, [])
+    const [tasks, setTasks] = React.useState([{} as User])
     const [open, setOpen] = React.useState([false, false, false])
 
     const handleClick = (index:number) => {
@@ -34,21 +53,21 @@ export default function SettingTable() {
             }
         >
 
-            {['Работник 1', 'Работник 2', 'Работник 3'].map((employee, index) => {
+            {tasks[0].name !== 'Здесь пока никого нет' ? tasks.map((employee, index) => {
                return (
-                   <div>
-                       <ListItemButton onClick={() => {handleClick(index)}}>
+                   <div key = {employee.name}>
+                       <ListItemButton onClick={() => {handleClick(index)}} key = {employee.name}>
                            <ListItemIcon>
                                <InboxIcon />
                            </ListItemIcon>
-                           <ListItemText primary={employee} />
+                           <ListItemText primary={employee.name} />
                            {open[index] ? <ExpandLess /> : <ExpandMore />}
                        </ListItemButton>
                        <Collapse in={open[index]} timeout="auto" unmountOnExit>
                            <List component="div" disablePadding>
-                           {['Задача 1','Задача 2','Задача 3'].map((task, index) => {
+                           {employee.tasks?.map((task, index) => {
                                return (
-                                   <ListItem sx={{ pl: 4 }}>
+                                   <ListItem sx={{ pl: 4 }} key = {index}>
                                        <ListItemIcon>
                                            <StarBorder />
                                        </ListItemIcon>
@@ -57,7 +76,7 @@ export default function SettingTable() {
                                    </ListItem>
                                )
                            })}
-                               <ListItem button sx={{ pl: 4 }}>
+                               <ListItem button sx={{ pl: 4 }} key = 'add'>
                                    <ListItemIcon>
                                        <AddIcon />
                                    </ListItemIcon>
@@ -68,7 +87,11 @@ export default function SettingTable() {
 
                    </div>
                )
-            })}
+            }) : (<Box component="span" sx={{ p: 2 }}>
+                    <Typography variant='h5'>{tasks[0].name}</Typography>
+                </Box>)}
         </List>
     )
 }
+
+export default SettingTable

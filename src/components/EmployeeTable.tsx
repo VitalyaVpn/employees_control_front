@@ -17,9 +17,21 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
+import {getUsers} from "../firebase/firebase";
+import {UserInDb} from "../types";
 
 const EmployeeTable:React.FC = () => {
 
+    React.useEffect(()=> {
+        const foo = async () => {
+            const data = await getUsers()
+            setData([...data as Array<UserInDb>])
+        }
+        foo()
+
+    }, [])
+
+    const [data, setData] = React.useState<UserInDb[] | undefined>(undefined)
     const [open, setOpen] = React.useState(false)
     const [hover, setHover] = React.useState([false, false, false])
 
@@ -55,7 +67,7 @@ const EmployeeTable:React.FC = () => {
     return (
         <Box sx={{width: '100%', paddingTop: '70px'}}>
             <List>
-                {['Работник 1', 'Работник 2', 'Работник 3'].map((employee, index)=>{
+                {data && data.map((employee, index)=>{
                     return (
                         <ListItem
                             secondaryAction={
@@ -73,8 +85,8 @@ const EmployeeTable:React.FC = () => {
                                 </Avatar>
                             </ListItemAvatar>
                             <ListItemText
-                                primary={employee}
-                                secondary='21424'
+                                primary={employee.name}
+                                secondary={employee.id}
                             />
                         </ListItem>
                     )

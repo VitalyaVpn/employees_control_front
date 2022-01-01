@@ -12,40 +12,31 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import {useEffect} from "react";
+import {DayReview, db, getUserDay, Task} from "../firebase/firebase";
+import {doc, getDoc} from "firebase/firestore";
 
 function createData(
     name: string,
-    isOnline: boolean,
-    start: string | null,
-    end: string | null,
-    currentTask: string | null,
-    tasksAmount: number,
+    online: boolean,
+    start: string | Date,
+    end: Date | string,
+    currentTask: string,
+    tasksCount: number,
+    tasks: Array<Task>
 ) {
     return {
         name,
-        isOnline,
+        online,
         start,
         end,
         currentTask,
-        tasksAmount,
-        history: [
-            {
-                taskName: 'Комментарии',
-                date: '2020-01-05 14:13',
-                dateEnd: '2020-01-05 15:48',
-                time: '1:00:19',
-            },
-            {
-                taskName: 'Накрутка',
-                date: '2020-01-05 14:59',
-                dateEnd: '2020-01-05 16:11',
-                time: '1:00:19',
-            },
-        ],
+        tasksCount,
+        tasks,
     };
 }
 
-function Row(props: { row: ReturnType<typeof createData> }) {
+function Row(props: { row: DayReview }) {
     const { row } = props
     const [open, setOpen] = React.useState(false)
 
@@ -64,15 +55,15 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                 <TableCell component="th" scope="row">
                     {row.name}
                 </TableCell>
-                <TableCell align="right">{row.isOnline ? 'Да' : 'Нет'}</TableCell>
+                <TableCell align="right">{row.online ? 'Да' : 'Нет'}</TableCell>
                 <TableCell align="right">{row.start ? row.start : 'Не на смене'}</TableCell>
                 <TableCell align="right">{row.end ? row.end : row.start ? 'Смена не окончена' : 'Не на смене'}</TableCell>
                 <TableCell align="right">{row.currentTask ? row.currentTask : 'Нет активных задач'}</TableCell>
-                <TableCell align="right" sx={{pr: 5}}>{row.tasksAmount}</TableCell>
+                <TableCell align="right" sx={{pr: 5}}>{row.tasksCount}</TableCell>
             </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+            <TableRow sx = {{backgroundColor: '#918e8ed3'}}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+                    <Collapse in={open} timeout="auto" unmountOnExit >
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
                                 История
@@ -87,13 +78,13 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.history.map((historyRow) => (
-                                        <TableRow key={historyRow.date}>
+                                    {row.tasks.map((historyRow,index) => (
+                                        <TableRow key={index}>
                                             <TableCell component="th" scope="row">
-                                                {historyRow.taskName}
+                                                {historyRow.name}
                                             </TableCell>
-                                            <TableCell align="right">{historyRow.date}</TableCell>
-                                            <TableCell align="right">{historyRow.dateEnd} </TableCell>
+                                            <TableCell align="right">{historyRow.start}</TableCell>
+                                            <TableCell align="right">{historyRow.end} </TableCell>
                                             <TableCell align="right">{historyRow.time} </TableCell>
                                         </TableRow>
                                     ))}
@@ -107,15 +98,27 @@ function Row(props: { row: ReturnType<typeof createData> }) {
     );
 }
 
-const rows = [
-    createData('Работник 1', false, '2020-01-05 14:13', null, null, 0),
-    createData('Работник 2', true, '2020-01-05 14:13', '2020-01-05 17:13', 'Задача 56', 3),
-    createData('Работник 3', false, null, null, 'Задача 5', 1),
-    createData('Работник 4', false, '2020-01-05 14:13', '2020-01-05 17:13', null, 0),
-    createData('Работник 5', true, '2020-01-05 14:13', null, 'Задача 23', 2),
-];
+// const rows = [
+//     createData('Работник 1', false, '2020-01-05 14:13', 'null', 'null', 0),
+//     createData('Работник 2', true, '2020-01-05 14:13', '2020-01-05 17:13', 'Задача 56', 3),
+//     createData('Работник 3', false, 'null', 'null', 'Задача 5', 1),
+//     createData('Работник 4', false, '2020-01-05 14:13', '2020-01-05 17:13', 'null', 0),
+//     createData('Работник 5', true, '2020-01-05 14:13', 'null', 'Задача 23', 2),
+// ];
 
 export default function StatTable() {
+
+    React.useEffect(()=> {
+        const foo = async () => {
+            const data = await getUserDay()
+
+            setData([...data as Array<DayReview>])
+        }
+        foo()
+
+    }, [])
+
+    const [data, setData] = React.useState<DayReview[] | undefined>(undefined)
     return (
         <TableContainer component={Paper} sx={{marginTop: '70px'}}>
             <Table aria-label="collapsible table">
@@ -131,7 +134,7 @@ export default function StatTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
+                    {data && data.map((row) => (
                         <Row key={row.name} row={row} />
                     ))}
                 </TableBody>
