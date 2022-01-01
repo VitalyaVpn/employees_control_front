@@ -20,12 +20,43 @@ import Button from '@mui/material/Button'
 import {getUsers} from "../firebase/firebase";
 import {UserInDb} from "../types";
 
+function stringToColor(string: string) {
+    let hash = 0;
+    let i;
+
+    for (i = 0; i < string.length; i += 1) {
+        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    let color = '#';
+
+    for (i = 0; i < 3; i += 1) {
+        const value = (hash >> (i * 8)) & 0xff;
+        color += `00${value.toString(16)}`.substring(`00${value.toString(16)}`.length - 2);
+    }
+
+    return color;
+}
+
+function stringAvatar(name: string) {
+    return {
+        sx: {
+            bgcolor: stringToColor(name),
+        },
+        children: name[0],
+    };
+}
+
 const EmployeeTable:React.FC = () => {
 
     React.useEffect(()=> {
         const foo = async () => {
             const data = await getUsers()
-            setData([...data as Array<UserInDb>])
+            const user = data as Array<UserInDb>
+            setData([...user])
+            setDeleteOpen([...user.map(() => {
+                return false
+            })])
         }
         foo()
 
@@ -33,7 +64,8 @@ const EmployeeTable:React.FC = () => {
 
     const [data, setData] = React.useState<UserInDb[] | undefined>(undefined)
     const [open, setOpen] = React.useState(false)
-    const [hover, setHover] = React.useState([false, false, false])
+    const [deleteOpen, setDeleteOpen] = React.useState<boolean[]>([false])
+    const [hover, setHover] = React.useState([false])
 
     const handleClickOpen = () => {
         setOpen(true)
@@ -42,6 +74,17 @@ const EmployeeTable:React.FC = () => {
     const handleClose = () => {
         setOpen(false)
     };
+
+    const handleDeleteClose = (index: number) => {
+        deleteOpen[index] = false
+        setDeleteOpen([...deleteOpen])
+    }
+
+    const handleDeleteOpen = (index: number) => {
+        deleteOpen[index] = true
+        setDeleteOpen([...deleteOpen])
+    }
+
 
     const fabStyle = {
         position: 'absolute',
@@ -58,10 +101,9 @@ const EmployeeTable:React.FC = () => {
 
 
 
-    const onHover = (index:number) => {
-        const arr = hover
-        arr[index] = !arr[index]
-        setHover([...arr])
+    const onHover = (index:number, state: boolean) => {
+        hover[index] = state
+        setHover([...hover])
     }
 
     return (
@@ -71,23 +113,44 @@ const EmployeeTable:React.FC = () => {
                     return (
                         <ListItem
                             secondaryAction={
-                                <IconButton edge="end" aria-label="delete">
+                                <IconButton edge="end" aria-label="delete" onClick = {()=>{handleDeleteOpen(index)}}>
                                     <DeleteIcon />
                                 </IconButton>
+
                             }
-                            onMouseEnter = { () => {onHover(index)} }
-                            onMouseLeave = { () => {onHover(index)}}
+                            onMouseEnter = { () => {onHover(index, true)} }
+                            onMouseLeave = { () => {onHover(index, false)}}
                             sx = {{backgroundColor: hover[index] ? 'rgba(25, 118, 210, 0.04)' : '#fff'}}
+                            key = {index}
                         >
                             <ListItemAvatar>
-                                <Avatar>
-                                    H
-                                </Avatar>
+                                <Avatar{...stringAvatar(employee.name)} />
                             </ListItemAvatar>
                             <ListItemText
                                 primary={employee.name}
                                 secondary={employee.id}
                             />
+                            <Dialog
+                                open={deleteOpen[index]}
+                                onClose={() => {handleDeleteClose(index)}}
+                                aria-labelledby='alert-dialog-title'
+                                aria-describedby='alert-dialog-description'
+                            >
+                                <DialogTitle id='alert-dialog-title'>
+                                    {'Вы уверены?'}
+                                </DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText id='alert-dialog-description'>
+                                        {`Это действие удалит пользователя ${employee.name}.`}
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={() => {handleDeleteClose(index)}}>Отмена</Button>
+                                    <Button onClick={() => {handleDeleteClose(index)}} autoFocus>
+                                        Удалить
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
                         </ListItem>
                     )
                 })}

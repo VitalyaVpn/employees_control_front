@@ -21,6 +21,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt'
 import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import Button from '@mui/material/Button'
 import GroupIcon from '@mui/icons-material/Group'
+import {Link} from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -140,14 +141,41 @@ export default function Sidebar() {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Настройка задач', 'Текущие задачи', 'Статистика', 'Работники'].map((text, index) => (
-                        <ListItem button key={text}>
+                    <Link to='/settings'>
+                        <ListItem button key='Настройка задач'>
                             <ListItemIcon>
-                                {index === 0 ? <SettingsIcon /> : index  === 1 ? <TaskAltIcon /> : index  === 2 ? <QueryStatsIcon /> : <GroupIcon />}
+                                <SettingsIcon />
                             </ListItemIcon>
-                            <ListItemText primary={text} />
+                            <ListItemText primary='Настройка задач' />
                         </ListItem>
-                    ))}
+                    </Link>
+
+                    <ListItem button key='Текущие задачи'>
+                        <ListItemIcon>
+                            <TaskAltIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Текущие задачи' />
+                    </ListItem>
+
+                    <Link to='/stats'>
+                        <ListItem button key='Статистика'>
+                            <ListItemIcon>
+                                <QueryStatsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Статистика' />
+                        </ListItem>
+                    </Link>
+
+                    <Link to='/employee'>
+                        <ListItem button key='Работники'>
+                            <ListItemIcon>
+                                <GroupIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Работники' />
+                        </ListItem>
+                    </Link>
+
+
                 </List>
                 <Divider />
                 <List>
