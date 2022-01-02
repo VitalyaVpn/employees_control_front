@@ -19,6 +19,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
 import {useAppDispatch, useAppSelector} from "../hooks/redux";
 import {addEmployee, deleteEmployee, fetchEmployee} from "../store/reducers/ActionCreators";
+import {useFormik} from "formik";
+import * as Yup from "yup";
 
 function stringToColor(string: string) {
     let hash = 0;
@@ -48,6 +50,31 @@ function stringAvatar(name: string) {
 }
 
 const EmployeeTable:React.FC = () => {
+
+    const formik = useFormik({
+        initialValues: {
+            id: '',
+            name: ''
+        },
+        validationSchema: Yup.object({
+            name: Yup
+                .string()
+                .max(255)
+                .required(
+                    'Поле не должно быть пустым'),
+            id: Yup
+                .string()
+                .max(255)
+                .required(
+                    'Поле не должно быть пустым'),
+
+        }),
+        onSubmit: (values) => {
+            dispatch(addEmployee(values))
+            handleClose()
+        }
+    })
+
     const dispatch = useAppDispatch()
     const {employee} = useAppSelector(state => state.employeeReducer)
     React.useEffect(()=> {
@@ -155,35 +182,47 @@ const EmployeeTable:React.FC = () => {
                 {fab.icon}
             </Fab>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Новый работник</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Введите имя и Telegram ID Работника
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin='dense'
-                        id='name'
-                        label='Имя'
-                        type='text'
-                        fullWidth
-                        variant='standard'
-                        required
-                    />
-                    <TextField
-                        margin='dense'
-                        id='telegram'
-                        label='Telegram ID'
-                        type='text'
-                        fullWidth
-                        variant='standard'
-                        required
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Отмена</Button>
-                    <Button onClick={()=> {dispatch(addEmployee({name: 'qwe', id: '565656'}))}}>Добавить</Button>
-                </DialogActions>
+                <form onSubmit={formik.handleSubmit}>
+                    <DialogTitle>Новый работник</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Введите имя и Telegram ID Работника
+                        </DialogContentText>
+                        <TextField
+                            error={Boolean(formik.touched.name && formik.errors.name)}
+                            helperText={formik.touched.name && formik.errors.name}
+                            autoFocus
+                            margin='dense'
+                            id='name'
+                            label='Имя'
+                            type='text'
+                            fullWidth
+                            variant='standard'
+                            onChange={formik.handleChange}
+                            value={formik.values.name}
+                            onBlur={formik.handleBlur}
+                            required
+                        />
+                        <TextField
+                            error={Boolean(formik.touched.id && formik.errors.id)}
+                            helperText={formik.touched.id && formik.errors.id}
+                            margin='dense'
+                            id='id'
+                            label='Telegram ID'
+                            type='text'
+                            fullWidth
+                            variant='standard'
+                            onChange={formik.handleChange}
+                            value={formik.values.id}
+                            onBlur={formik.handleBlur}
+                            required
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Отмена</Button>
+                        <Button type='submit'>Добавить</Button>
+                    </DialogActions>
+                </form>
             </Dialog>
         </Box>
     )

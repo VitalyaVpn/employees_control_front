@@ -61,7 +61,7 @@ function Row(props: { row: DayReview }) {
                 <TableCell align="right">{row.currentTask ? row.currentTask : 'Нет активных задач'}</TableCell>
                 <TableCell align="right" sx={{pr: 5}}>{row.tasksCount}</TableCell>
             </TableRow>
-            <TableRow sx = {{backgroundColor: '#918e8ed3'}}>
+            <TableRow sx = {{backgroundColor: 'rgba(0, 0, 0, 0.04)'}}>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
                     <Collapse in={open} timeout="auto" unmountOnExit >
                         <Box sx={{ margin: 1 }}>
@@ -98,13 +98,6 @@ function Row(props: { row: DayReview }) {
     );
 }
 
-// const rows = [
-//     createData('Работник 1', false, '2020-01-05 14:13', 'null', 'null', 0),
-//     createData('Работник 2', true, '2020-01-05 14:13', '2020-01-05 17:13', 'Задача 56', 3),
-//     createData('Работник 3', false, 'null', 'null', 'Задача 5', 1),
-//     createData('Работник 4', false, '2020-01-05 14:13', '2020-01-05 17:13', 'null', 0),
-//     createData('Работник 5', true, '2020-01-05 14:13', 'null', 'Задача 23', 2),
-// ];
 
 export default function StatTable() {
     const dispatch = useAppDispatch()

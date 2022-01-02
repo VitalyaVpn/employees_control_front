@@ -2,15 +2,20 @@ import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { collection, getDoc, doc, getDocs,setDoc } from 'firebase/firestore'
 import {DayReview, IUser, Task} from "../types";
-
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth"
 
 const firebaseApp = initializeApp({
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_PROJECT_ID
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket:  process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGER_SENDING_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID
 })
 
 export const db = getFirestore()
+export const auth = getAuth()
 
 export const getUsers = async () => {
     return new Promise(async (resolve, reject) => {
@@ -126,4 +131,27 @@ export const getUserDay = async () => {
 }
 
 
-// }
+
+
+
+export const signIn = async (email:string, password:string) => {
+    return new Promise ( (resolve, reject) => {
+       signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                resolve({email: userCredential.user.email, uid: userCredential.user.uid})
+            })
+            .catch((error) => {
+                reject(new Error(error.message))
+            })
+    })
+}
+
+export const userSignOut = async () => {
+    return new Promise((resolve, reject) => {
+        signOut(auth).then(() => {
+           resolve('Signed out')
+        }).catch((error) => {
+            reject(new Error(error.message))
+        })
+    })
+}

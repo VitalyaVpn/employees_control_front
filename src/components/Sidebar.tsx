@@ -22,6 +22,9 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import Button from '@mui/material/Button'
 import GroupIcon from '@mui/icons-material/Group'
 import {Link} from 'react-router-dom'
+import {useAppDispatch, useAppSelector} from "../hooks/redux";
+import {appSlice} from "../store/reducers/AppSlice";
+import {logout} from "../store/reducers/ActionCreators";
 
 const drawerWidth = 240;
 
@@ -96,30 +99,26 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Sidebar() {
+
+    const dispatch = useAppDispatch()
+    const {drawer, activePage} = useAppSelector(state=> state.appReducer)
+    const {toggleDrawer, setActivePage} = appSlice.actions
+
     const theme = useTheme()
-    const [open, setOpen] = React.useState(false)
-
-    const handleDrawerOpen = () => {
-        setOpen(true)
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false)
-    };
 
     return (
         <Box sx={{ display: 'flex', flexGrow: 1 }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar position="fixed" open={drawer}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
+                        onClick={()=>{dispatch(toggleDrawer())}}
                         edge="start"
                         sx={{
                             marginRight: '36px',
-                            ...(open && { display: 'none' }),
+                            ...(drawer && { display: 'none' }),
                         }}
                     >
                         <MenuIcon />
@@ -128,21 +127,28 @@ export default function Sidebar() {
                         Mini variant drawer
                     </Typography>
                     <Stack direction="row" spacing={3} alignSelf='center' alignItems='center'>
-                        <Button color="inherit">Выйти</Button>
+                        <Button
+                            color="inherit"
+                            onClick = {()=>{dispatch(logout())}}
+                        >Выйти</Button>
                         <Avatar alt="Profile" src="https://sun1-14.userapi.com/s/v1/if1/p4UrdLSb9aqnjc3f1oWnCcVtYHoeL4wX2f3XPFDFEVx9y23wY_GJibcwM1hKY9KCq2j0j1en.jpg?size=50x50&quality=96&crop=1377,485,573,573&ava=1" />
                     </Stack>
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={open}>
+            <Drawer variant="permanent" open={drawer}>
                 <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={()=>{dispatch(toggleDrawer())}}>
                         {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
                 <List>
                     <Link to='/settings'>
-                        <ListItem button key='Настройка задач'>
+                        <ListItem
+                            button key='Настройка задач'
+                            sx = {{bgcolor: activePage === 'tasks' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0.00)'}}
+                            onClick = {()=>{dispatch(setActivePage('tasks'))}}
+                        >
                             <ListItemIcon>
                                 <SettingsIcon />
                             </ListItemIcon>
@@ -150,15 +156,11 @@ export default function Sidebar() {
                         </ListItem>
                     </Link>
 
-                    <ListItem button key='Текущие задачи'>
-                        <ListItemIcon>
-                            <TaskAltIcon />
-                        </ListItemIcon>
-                        <ListItemText primary='Текущие задачи' />
-                    </ListItem>
-
                     <Link to='/stats'>
-                        <ListItem button key='Статистика'>
+                        <ListItem button key='Статистика'
+                                  sx = {{bgcolor: activePage === 'stats' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0.00)'}}
+                                  onClick = {()=>{dispatch(setActivePage('stats'))}}
+                        >
                             <ListItemIcon>
                                 <QueryStatsIcon />
                             </ListItemIcon>
@@ -167,7 +169,11 @@ export default function Sidebar() {
                     </Link>
 
                     <Link to='/employee'>
-                        <ListItem button key='Работники'>
+                        <ListItem
+                            button key='Работники'
+                            sx = {{bgcolor: activePage === 'employee' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0.00)'}}
+                            onClick = {()=>{dispatch(setActivePage('employee'))}}
+                        >
                             <ListItemIcon>
                                 <GroupIcon />
                             </ListItemIcon>

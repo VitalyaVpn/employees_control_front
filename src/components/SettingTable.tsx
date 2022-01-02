@@ -12,21 +12,41 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import StarBorder from '@mui/icons-material/StarBorder'
 import {Button, Typography} from "@mui/material"
 import AddIcon from '@mui/icons-material/Add'
-import {getTasks} from "../firebase/firebase"
-import {ITasks} from "../types"
 import Box from '@mui/material/Box'
 import {useAppDispatch, useAppSelector} from "../hooks/redux";
-import {addTask, deleteEmployee, deleteTask, fetchTasks} from "../store/reducers/ActionCreators";
+import {addTask, deleteEmployee, deleteTask, fetchTasks, login} from "../store/reducers/ActionCreators";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
+import {useFormik} from "formik";
+import * as Yup from "yup";
 
 
 
 const SettingTable:React.FC = () => {
+
+    const formik = useFormik({
+        initialValues: {
+            task: '',
+        },
+        validationSchema: Yup.object({
+            task: Yup
+                .string()
+                .max(255)
+                .required(
+                    'Поле не должно быть пустым'),
+
+        }),
+        onSubmit: (values) => {
+            //dispatch(addTask(values))
+            // console.log(values)
+            // handleClose()
+        }
+    });
+
     const dispatch = useAppDispatch()
     const {tasks} = useAppSelector(state => state.tasksReducer)
     React.useEffect(() => {
@@ -49,11 +69,7 @@ const SettingTable:React.FC = () => {
         setOpenDialog(true)
     }
 
-    const [task, setTask] = React.useState('')
 
-    const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=> {
-        setTask(e.target.value)
-    }
 
     const [deleteOpen, setDeleteOpen] = React.useState<boolean[]>([false])
     const handleDeleteClose = (index: number) => {
@@ -138,36 +154,47 @@ const SettingTable:React.FC = () => {
                                    onClose={handleClose}
                                    aria-labelledby='alert-dialog-title'
                                    aria-describedby='alert-dialog-description'
-                               >
-                                   <DialogTitle id='alert-dialog-title'>
-                                       Новая задача
-                                   </DialogTitle>
-                                   <DialogContent>
-                                       <DialogContentText id='alert-dialog-description'>
-                                           {`Введите название задачи для ${employee.name}`}
-                                       </DialogContentText>
-                                       <TextField
-                                           autoFocus
-                                           margin='dense'
-                                           id='task'
-                                           label='Задача'
-                                           type='text'
-                                           fullWidth
-                                           variant='standard'
-                                           required
-                                           onChange={handleChange}
-                                       />
-                                   </DialogContent>
 
-                                   <DialogActions>
-                                       <Button onClick={handleClose}>Отмена</Button>
-                                       <Button onClick={()=> {
-                                           dispatch(addTask({id: employee.id, task}))
-                                           handleClose()
-                                       }}>
-                                           Добавить
-                                       </Button>
-                                   </DialogActions>
+                               >
+                                   <form onSubmit={(event) => {
+                                       event.preventDefault()
+                                       dispatch(addTask({task: formik.values.task, id: employee.id}))
+                                       handleClose()
+                                   }}>
+                                       <DialogTitle id='alert-dialog-title'>
+                                           Новая задача
+                                       </DialogTitle>
+                                       <DialogContent>
+                                           <DialogContentText id='alert-dialog-description'>
+                                               {`Введите название задачи для ${employee.name}`}
+                                           </DialogContentText>
+
+                                           <TextField
+                                               error={Boolean(formik.touched.task && formik.errors.task)}
+                                               helperText={formik.touched.task && formik.errors.task}
+                                               autoFocus
+                                               margin='dense'
+                                               id='task'
+                                               label='Задача'
+                                               type='text'
+                                               fullWidth
+                                               variant='standard'
+                                               required
+                                               onChange={formik.handleChange}
+                                               value={formik.values.task}
+                                               onBlur={formik.handleBlur}
+                                           />
+                                       </DialogContent>
+
+                                       <DialogActions>
+                                           <Button onClick={handleClose}>Отмена</Button>
+                                           <Button
+                                               type = 'submit'
+                                           >
+                                               Добавить
+                                           </Button>
+                                       </DialogActions>
+                                   </form>
                                </Dialog>
                            </List>
                        </Collapse>

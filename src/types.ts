@@ -31,3 +31,13 @@ export interface INewTask {
     id: string
     task: string
 }
+
+export interface IFirebaseUser {
+    uid: string
+    email: string | null
+}
+
+export interface ILoginData {
+    email: string
+    password: string
+}

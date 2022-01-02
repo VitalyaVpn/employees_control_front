@@ -1,10 +1,11 @@
 import {AppDispatch} from "../store";
-import {db, getTasks, getUserDay, getUsers} from "../../firebase/firebase";
-import {DayReview, INewTask, ITasks, IUser} from "../../types";
+import {db, getTasks, getUserDay, getUsers, signIn, userSignOut} from "../../firebase/firebase";
+import {DayReview, ILoginData, INewTask, ITasks, IUser} from "../../types";
 import {employeeSlice} from "./EmployeeSlice";
 import {tasksSlice} from "./TaskSlice";
 import {statsSlice} from "./StatsSlice";
 import {doc, setDoc, deleteDoc, updateDoc, deleteField } from "firebase/firestore";
+import {userSlice} from "./UserSlice";
 
 
 export const fetchEmployee = () => async (dispatch: AppDispatch) => {
@@ -28,10 +29,7 @@ export const addEmployee = (payload:IUser) => async (dispatch: AppDispatch) => {
                 id: payload.id,
             }
         )
-        await setDoc(doc(db, 'users',...[payload.id, 'data', 'tasks']), {
-
-            }
-        )
+        await setDoc(doc(db, 'users',...[payload.id, 'data', 'tasks']), {})
         dispatch(employeeSlice.actions.addEmployeeFetchingSuccess())
         dispatch(fetchEmployee())
     }
@@ -110,5 +108,29 @@ export const fetchStats = () => async (dispatch: AppDispatch) => {
     catch (error: unknown) {
         const text = error instanceof Error ? error.message : 'Что-то пошло не так'
         dispatch(statsSlice.actions.statsFetchingError(text))
+    }
+}
+
+export const login = (payload:ILoginData) => async (dispatch: AppDispatch) => {
+    try {
+        dispatch(userSlice.actions.loginFetching())
+        const user = await signIn(payload.email, payload.password)
+        dispatch(userSlice.actions.loginFetchingSuccess())
+    }
+    catch (error: unknown) {
+        const text = error instanceof Error ? error.message : 'Что-то пошло не так'
+        dispatch(userSlice.actions.loginFetchingError(text))
+    }
+}
+
+export const logout = () => async (dispatch: AppDispatch) => {
+    try {
+        dispatch(userSlice.actions.logoutFetching())
+        await userSignOut()
+        dispatch(userSlice.actions.logoutFetchingSuccess())
+    }
+    catch (error) {
+        const text = error instanceof Error ? error.message : 'Что-то пошло не так'
+        dispatch(userSlice.actions.logoutFetchingError(text))
     }
 }

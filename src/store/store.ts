@@ -2,11 +2,15 @@ import {combineReducers, configureStore} from "@reduxjs/toolkit";
 import employeeReducer from './reducers/EmployeeSlice'
 import tasksReducer from './reducers/TaskSlice'
 import statsReducer from './reducers/StatsSlice'
+import appReducer from './reducers/AppSlice'
+import userReducer from './reducers/UserSlice'
 
 const rootReducer = combineReducers({
     employeeReducer,
     tasksReducer,
-    statsReducer
+    statsReducer,
+    appReducer,
+    userReducer
 })
 
 export const setupStore = () => {
