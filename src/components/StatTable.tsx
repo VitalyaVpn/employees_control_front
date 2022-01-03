@@ -15,6 +15,11 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import {DayReview, Task} from "../types";
 import {useAppDispatch, useAppSelector} from "../hooks/redux";
 import {fetchStats} from "../store/reducers/ActionCreators";
+import {DatePicker, LocalizationProvider} from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import * as ruLocale from 'date-fns/locale/ru/index.js'
+import TextField, {TextFieldProps} from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 function createData(
     name: string,
@@ -39,7 +44,6 @@ function createData(
 function Row(props: { row: DayReview }) {
     const { row } = props
     const [open, setOpen] = React.useState(false)
-
     return (
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset'} }}>
@@ -103,29 +107,50 @@ export default function StatTable() {
     const dispatch = useAppDispatch()
     const {stats} = useAppSelector(state => state.statsReducer)
     React.useEffect(()=> {
-        dispatch(fetchStats())
+        const date = new Date
+        dispatch(fetchStats(date.toLocaleDateString()))
     }, [])
+    const [value, setValue] = React.useState<Date | null>(new Date())
 
     return (
-        <TableContainer component={Paper} sx={{marginTop: '70px'}}>
-            <Table aria-label="collapsible table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell />
-                        <TableCell>Имя</TableCell>
-                        <TableCell align="right">На смене</TableCell>
-                        <TableCell align="right">Время начала смены</TableCell>
-                        <TableCell align="right">Время окончания смены</TableCell>
-                        <TableCell align="right">Текущая задача</TableCell>
-                        <TableCell align="right" sx={{pr: 5}}>Количество задач</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {stats && stats.map((row) => (
-                        <Row key={row.name} row={row} />
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+            <TableContainer component={Paper} sx={{marginTop: '70px'}}>
+                <Box sx={{display: 'flex', justifyContent: 'flex=start', width: '100%', p:2}}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+                        <DatePicker
+                            mask='__.__.____'
+                            value={value}
+                            onChange={(newValue) => setValue(newValue)}
+                            renderInput={(params:TextFieldProps) => <TextField {...params} />}
+                        />
+                    </LocalizationProvider>
+                    <Button variant = 'outlined'
+                            sx={{ml:1}}
+                            onClick = {()=>{
+                        if(value){
+                            dispatch(fetchStats(value.toLocaleDateString()))
+                        }
+                      }
+                    }>Применить</Button>
+                </Box>
+                <Table aria-label="collapsible table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell>Имя</TableCell>
+                            <TableCell align="right">На смене</TableCell>
+                            <TableCell align="right">Время начала смены</TableCell>
+                            <TableCell align="right">Время окончания смены</TableCell>
+                            <TableCell align="right">Текущая задача</TableCell>
+                            <TableCell align="right" sx={{pr: 5}}>Количество задач</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {stats && stats.map((row) => (
+                            <Row key={row.name} row={row} />
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
     );
 }

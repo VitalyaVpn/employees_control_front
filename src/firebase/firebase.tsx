@@ -58,7 +58,7 @@ export const getTasks = async  () => {
                 return {
                     name: user.name,
                     id: user.id,
-                    tasks: [...arr]
+                    tasks: [...arr.sort()]
                 }
             })
         )
@@ -67,7 +67,7 @@ export const getTasks = async  () => {
     })
 }
 
-export const getUserDay = async () => {
+export const getUserDay = async (date:string) => {
    return new Promise( async (resolve, reject) => {
        const userRef = collection(db, 'users')
        const userSnap  = await getDocs(userRef)
@@ -80,7 +80,7 @@ export const getUserDay = async () => {
        }
        const users = Promise.all(
            arr.map(async (user)=>{
-               const dayRef = doc(db,'users',  ...[user.id, 'workingday', '01.01.2021'])
+               const dayRef = doc(db,'users',  ...[user.id, 'workingday', date])
                const day = await getDoc(dayRef)
                const tasks:Array<Task> = []
                let currentTask = 'Нет активных задач',
@@ -112,8 +112,6 @@ export const getUserDay = async () => {
                                })
                            }
                        }
-
-
 
                return {
                    name: user.name,

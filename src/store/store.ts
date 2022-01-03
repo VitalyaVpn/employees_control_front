@@ -5,7 +5,7 @@ import statsReducer from './reducers/StatsSlice'
 import appReducer from './reducers/AppSlice'
 import userReducer from './reducers/UserSlice'
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     employeeReducer,
     tasksReducer,
     statsReducer,

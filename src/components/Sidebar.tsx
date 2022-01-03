@@ -22,11 +22,11 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import Button from '@mui/material/Button'
 import GroupIcon from '@mui/icons-material/Group'
 import {Link} from 'react-router-dom'
-import {useAppDispatch, useAppSelector} from "../hooks/redux";
-import {appSlice} from "../store/reducers/AppSlice";
-import {logout} from "../store/reducers/ActionCreators";
+import {useAppDispatch, useAppSelector} from "../hooks/redux"
+import {appSlice} from "../store/reducers/AppSlice"
+import {logout} from "../store/reducers/ActionCreators"
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -35,7 +35,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
         duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
-});
+})
 
 const closedMixin = (theme: Theme): CSSObject => ({
     transition: theme.transitions.create('width', {
@@ -47,7 +47,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
     [theme.breakpoints.up('sm')]: {
         width: `calc(${theme.spacing(7)} + 1px)`,
     },
-});
+})
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -56,10 +56,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-}));
+}))
 
 interface AppBarProps extends MuiAppBarProps {
-    open?: boolean;
+    open?: boolean
 }
 
 const AppBar = styled(MuiAppBar, {
@@ -79,7 +79,7 @@ const AppBar = styled(MuiAppBar, {
             duration: theme.transitions.duration.enteringScreen,
         }),
     }),
-}));
+}))
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -96,9 +96,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
             '& .MuiDrawer-paper': closedMixin(theme),
         }),
     }),
-);
+)
 
-export default function Sidebar() {
+const Sidebar = () => {
 
     const dispatch = useAppDispatch()
     const {drawer, activePage} = useAppSelector(state=> state.appReducer)
@@ -124,7 +124,7 @@ export default function Sidebar() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, textAlign: 'left' }} >
-                        Mini variant drawer
+                        Мониторинг сотрудников
                     </Typography>
                     <Stack direction="row" spacing={3} alignSelf='center' alignItems='center'>
                         <Button
@@ -196,5 +196,7 @@ export default function Sidebar() {
                 </List>
             </Drawer>
         </Box>
-    );
+    )
 }
+
+export default Sidebar

@@ -6,6 +6,7 @@ import {tasksSlice} from "./TaskSlice";
 import {statsSlice} from "./StatsSlice";
 import {doc, setDoc, deleteDoc, updateDoc, deleteField } from "firebase/firestore";
 import {userSlice} from "./UserSlice";
+import {appSlice} from "./AppSlice";
 
 
 export const fetchEmployee = () => async (dispatch: AppDispatch) => {
@@ -98,10 +99,10 @@ export const deleteTask = (payload:INewTask) => async (dispatch: AppDispatch) =>
     }
 }
 
-export const fetchStats = () => async (dispatch: AppDispatch) => {
+export const fetchStats = (payload: string) => async (dispatch: AppDispatch) => {
     try {
         dispatch(statsSlice.actions.statsFetching())
-        const res = await getUserDay()
+        const res = await getUserDay(payload)
         const data = res as Array<DayReview>
         dispatch(statsSlice.actions.statsFetchingSuccess(data))
     }
@@ -132,5 +133,17 @@ export const logout = () => async (dispatch: AppDispatch) => {
     catch (error) {
         const text = error instanceof Error ? error.message : 'Что-то пошло не так'
         dispatch(userSlice.actions.logoutFetchingError(text))
+    }
+}
+
+export const setLoading = () => async (dispatch: AppDispatch) => {
+    try {
+        dispatch(appSlice.actions.setLoadingPage(true))
+        setTimeout(()=>{
+            dispatch(appSlice.actions.setLoadingPage(false))
+        }, 1500)
+    }
+    catch (error){
+
     }
 }

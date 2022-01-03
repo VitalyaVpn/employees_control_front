@@ -4,11 +4,13 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 interface AppState {
     drawer: boolean
     activePage: string
+    loading: boolean
 }
 
 const initialState: AppState = {
     drawer: false,
-    activePage: 'employee'
+    activePage: 'employee',
+    loading: true
 }
 
 export const appSlice = createSlice({
@@ -20,7 +22,10 @@ export const appSlice = createSlice({
         },
         setActivePage(state, action: PayloadAction<string>) {
             state.activePage = action.payload
-        }
+        },
+        setLoadingPage(state, action: PayloadAction<boolean>) {
+            state.loading = action.payload
+        },
     }
 })
 

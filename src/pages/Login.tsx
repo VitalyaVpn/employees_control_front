@@ -1,15 +1,23 @@
-
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
-import {useAppDispatch, useAppSelector} from "../hooks/redux";
-import {login} from "../store/reducers/ActionCreators";
+import * as React from "react"
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material'
+import LinearProgress from '@mui/material/LinearProgress'
+import {useAppDispatch, useAppSelector} from "../hooks/redux"
+import {setLoading, login} from "../store/reducers/ActionCreators"
 import {Navigate} from 'react-router-dom'
 
 const Login = () => {
 
+    React.useEffect(()=>{
+        dispatch(setLoading())
+    }, [])
+
     const {user} = useAppSelector(state => state.userReducer)
+    const {loading} = useAppSelector(state => state.appReducer)
+
     const dispatch = useAppDispatch()
+
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -38,73 +46,79 @@ const Login = () => {
     }
     return (
         <>
+            {loading ? <LinearProgress /> :
             <Box
                 component='main'
                 sx={{
                     alignItems: 'center',
                     display: 'flex',
                     flexGrow: 1,
-                    minHeight: '100%'
+                    minHeight: '100%',
+                    width: '100%'
                 }}
             >
-                <Container maxWidth='sm'>
-                    <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ my: 3, textAlign: 'left' }}>
-                            <Typography
-                                color='textPrimary'
-                                variant='h4'
-                                gutterBottom
-                            >
-                                Вход
-                            </Typography>
-                            <Typography
-                                color='textSecondary'
-                                variant='body2'
-                            >
-                                Вход с использованием E-mail и пароля
-                            </Typography>
-                        </Box>
-                        <TextField
-                            error={Boolean(formik.touched.email && formik.errors.email)}
-                            fullWidth
-                            helperText={formik.touched.email && formik.errors.email}
-                            label='Email'
-                            margin='normal'
-                            name='email'
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type='email'
-                            value={formik.values.email}
-                            variant='outlined'
-                        />
-                        <TextField
-                            error={Boolean(formik.touched.password && formik.errors.password)}
-                            fullWidth
-                            helperText={formik.touched.password && formik.errors.password}
-                            label='Пароль'
-                            margin='normal'
-                            name='password'
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type='password'
-                            value={formik.values.password}
-                            variant='outlined'
-                        />
-                        <Box sx={{ py: 2 }}>
-                            <Button
-                                color='primary'
-                                disabled={formik.isSubmitting}
+                    <Container maxWidth='sm'>
+                        <form onSubmit={formik.handleSubmit}>
+                            <Box sx={{ my: 3, textAlign: 'left' }}>
+                                <Typography
+                                    color='textPrimary'
+                                    variant='h4'
+                                    gutterBottom
+                                >
+                                    Вход
+                                </Typography>
+                                <Typography
+                                    color='textSecondary'
+                                    variant='body2'
+                                >
+                                    Вход с использованием E-mail и пароля
+                                </Typography>
+                            </Box>
+                            <TextField
+                                error={Boolean(formik.touched.email && formik.errors.email)}
                                 fullWidth
-                                size='large'
-                                type='submit'
-                                variant='contained'
-                            >
-                                Войти
-                            </Button>
-                        </Box>
-                    </form>
-                </Container>
+                                helperText={formik.touched.email && formik.errors.email}
+                                label='Email'
+                                margin='normal'
+                                name='email'
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                type='email'
+                                value={formik.values.email}
+                                variant='outlined'
+                            />
+                            <TextField
+                                error={Boolean(formik.touched.password && formik.errors.password)}
+                                fullWidth
+                                helperText={formik.touched.password && formik.errors.password}
+                                label='Пароль'
+                                margin='normal'
+                                name='password'
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                type='password'
+                                value={formik.values.password}
+                                variant='outlined'
+                            />
+                            <Box sx={{ py: 2 }}>
+                                <Button
+                                    color='primary'
+                                    disabled={formik.isSubmitting}
+                                    fullWidth
+                                    size='large'
+                                    type='submit'
+                                    variant='contained'
+                                >
+                                    Войти
+                                </Button>
+                            </Box>
+                        </form>
+                    </Container>
+
+
+
             </Box>
+                }
         </>
     )
 }
