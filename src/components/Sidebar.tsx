@@ -146,7 +146,7 @@ const Sidebar = () => {
                     <Link to='/settings'>
                         <ListItem
                             button key='Настройка задач'
-                            sx = {{bgcolor: activePage === 'tasks' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0.00)'}}
+                            sx = {{bgcolor: activePage === 'settings' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0.00)'}}
                             onClick = {()=>{dispatch(setActivePage('tasks'))}}
                         >
                             <ListItemIcon>

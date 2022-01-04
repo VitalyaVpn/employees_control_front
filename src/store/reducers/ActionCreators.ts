@@ -144,6 +144,6 @@ export const setLoading = () => async (dispatch: AppDispatch) => {
         }, 1500)
     }
     catch (error){
-
+        dispatch(appSlice.actions.setLoadingPage(false))
     }
 }

@@ -4,12 +4,20 @@ import tasksReducer from './reducers/TaskSlice'
 import statsReducer from './reducers/StatsSlice'
 import appReducer from './reducers/AppSlice'
 import userReducer from './reducers/UserSlice'
+import storage from "redux-persist/lib/storage";
+import {persistReducer} from "redux-persist";
+
+const appConfig = {
+    key: 'app',
+    storage,
+    whitelist: ['drawer']
+}
 
 export const rootReducer = combineReducers({
     employeeReducer,
     tasksReducer,
     statsReducer,
-    appReducer,
+    appReducer: persistReducer(appConfig, appReducer),
     userReducer
 })
 

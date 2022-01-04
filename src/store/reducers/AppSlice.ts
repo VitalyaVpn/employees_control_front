@@ -10,7 +10,7 @@ interface AppState {
 const initialState: AppState = {
     drawer: false,
     activePage: 'employee',
-    loading: true
+    loading: false
 }
 
 export const appSlice = createSlice({
