@@ -1,6 +1,6 @@
 import {AppDispatch} from "../store";
-import {db, getTasks, getUserDay, getUsers, signIn, userSignOut} from "../../firebase/firebase";
-import {DayReview, ILoginData, INewTask, ITasks, IUser} from "../../types";
+import {db, getTasks, getUserDay, getUserInfo, getUsers, signIn, userSignOut} from "../../firebase/firebase";
+import {DayReview, ILoginData, INewTask, ITasks, IUser, IUserProfile} from "../../types";
 import {employeeSlice} from "./EmployeeSlice";
 import {tasksSlice} from "./TaskSlice";
 import {statsSlice} from "./StatsSlice";
@@ -145,5 +145,18 @@ export const setLoading = () => async (dispatch: AppDispatch) => {
     }
     catch (error){
         dispatch(appSlice.actions.setLoadingPage(false))
+    }
+}
+
+export const setUserInfo = (payload: string) => async (dispatch: AppDispatch) => {
+    try {
+        dispatch(userSlice.actions.fetchingInfo())
+        const res = await getUserInfo(payload)
+        const data = res as IUserProfile
+        dispatch(userSlice.actions.fetchingInfoSuccess(data))
+    }
+    catch (error: unknown) {
+        const text = error instanceof Error ? error.message : 'Что-то пошло не так'
+        dispatch(userSlice.actions.fetchingInfoError())
     }
 }

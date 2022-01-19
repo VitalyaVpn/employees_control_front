@@ -9,6 +9,11 @@ export interface IUser {
     id: string
 }
 
+export interface IUserProfile {
+    name: string
+    profileUrl: string
+}
+
 export interface Task  {
     name: string
     start: string

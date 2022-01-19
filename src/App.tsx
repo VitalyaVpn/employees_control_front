@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import {auth} from "./firebase/firebase";
 import {userSlice} from "./store/reducers/UserSlice";
 import {useAppDispatch} from "./hooks/redux";
+import {setUserInfo} from "./store/reducers/ActionCreators";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   auth.onAuthStateChanged((user) => {
       if (user) {
           dispatch(userSlice.actions.loginStatusChanged({email: user.email, uid: user.uid}))
+          dispatch(setUserInfo(user.uid))
       }
       else {
           dispatch(userSlice.actions.loginStatusChanged({email: '', uid: ''}))

@@ -102,6 +102,7 @@ const Sidebar = () => {
 
     const dispatch = useAppDispatch()
     const {drawer, activePage} = useAppSelector(state=> state.appReducer)
+    const {profileUrl, name} = useAppSelector(state=> state.userReducer)
     const {toggleDrawer, setActivePage} = appSlice.actions
 
     const theme = useTheme()
@@ -127,11 +128,14 @@ const Sidebar = () => {
                         Мониторинг сотрудников
                     </Typography>
                     <Stack direction="row" spacing={3} alignSelf='center' alignItems='center'>
+                        <Typography variant='h6'>{name}</Typography>
+                        <Avatar alt="Profile" src={profileUrl}/>
                         <Button
                             color="inherit"
                             onClick = {()=>{dispatch(logout())}}
-                        >Выйти</Button>
-                        <Avatar alt="Profile" src="https://sun1-14.userapi.com/s/v1/if1/p4UrdLSb9aqnjc3f1oWnCcVtYHoeL4wX2f3XPFDFEVx9y23wY_GJibcwM1hKY9KCq2j0j1en.jpg?size=50x50&quality=96&crop=1377,485,573,573&ava=1" />
+                        >
+                            Выйти
+                        </Button>
                     </Stack>
                 </Toolbar>
             </AppBar>
@@ -140,6 +144,7 @@ const Sidebar = () => {
                     <IconButton onClick={()=>{dispatch(toggleDrawer())}}>
                         {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                     </IconButton>
+
                 </DrawerHeader>
                 <Divider />
                 <List>

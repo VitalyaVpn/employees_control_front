@@ -1,11 +1,13 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IFirebaseUser} from "../../types";
+import {IFirebaseUser, IUserProfile} from "../../types";
 
 
 interface TasksState {
     user: IFirebaseUser
     isLoading: boolean
     error: string
+    profileUrl: string
+    name: string
 }
 
 const initialState: TasksState = {
@@ -14,7 +16,9 @@ const initialState: TasksState = {
         uid: ''
     },
     isLoading: false,
-    error:''
+    error:'',
+    name: 'Имя',
+    profileUrl: 'https://sun9-32.userapi.com/impg/c855420/v855420426/185a88/qJCF2fX2Mag.jpg?size=604x604&quality=96&sign=665ccba7624293ce96bec8a94b791216&type=album',
 }
 
 export const userSlice = createSlice({
@@ -47,6 +51,17 @@ export const userSlice = createSlice({
             state.isLoading = false
             state.error = action.payload
         },
+        fetchingInfo(state){
+            state.isLoading = true
+        },
+        fetchingInfoSuccess(state, action: PayloadAction<IUserProfile>){
+            state.name = action.payload.name
+            state.profileUrl = action.payload.profileUrl
+            state.isLoading = false
+        },
+        fetchingInfoError(state){
+            state.isLoading = false
+        }
     }
 })
 

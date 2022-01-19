@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { collection, getDoc, doc, getDocs,setDoc } from 'firebase/firestore'
-import {DayReview, IUser, Task} from "../types";
+import { collection, getDoc, doc, getDocs,query, where } from 'firebase/firestore'
+import {DayReview, IUser, IUserProfile, Task} from "../types";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth"
 
 const firebaseApp = initializeApp({
@@ -82,13 +82,21 @@ export const getUserDay = async (date:string) => {
            arr.map(async (user)=>{
                const dayRef = doc(db,'users',  ...[user.id, 'workingday', date])
                const day = await getDoc(dayRef)
+               const sessionRef = doc(db, 'users', ...[user.id, 'data', 'session'])
+               const session = await getDoc(sessionRef)
+
                const tasks:Array<Task> = []
                let currentTask = 'Нет активных задач',
                    online      = false,
                    start       = 'Не на смене',
                    end         = 'Не на смене',
                    tasksCount = 0
-
+               const sessionData = session.data()
+               if(sessionData) {
+                  if (sessionData.cureentTask) {
+                      currentTask = sessionData.cureentTask.name
+                  }
+               }
                const snap = day.data()
                        if (snap) {
 
@@ -100,9 +108,6 @@ export const getUserDay = async (date:string) => {
                                const taskArr = snap.tasks
                                tasksCount = taskArr.length
                                taskArr.forEach((item:Task)=> {
-                                   if (item.current) {
-                                       currentTask = item.name
-                                   }
                                    tasks.push({
                                        name: item.name,
                                        start: item.start,
@@ -112,7 +117,15 @@ export const getUserDay = async (date:string) => {
                                })
                            }
                        }
-
+               console.log({
+                   name: user.name,
+                   online,
+                   start,
+                   end,
+                   currentTask,
+                   tasksCount,
+                   tasks: [...tasks]
+               })
                return {
                    name: user.name,
                    online,
@@ -128,7 +141,25 @@ export const getUserDay = async (date:string) => {
     })
 }
 
-
+export const getUserInfo = async (uid: string) => {
+    return new Promise(async (resolve, reject)=> {
+        const user:IUserProfile = {
+            name: '',
+            profileUrl: ''
+        }
+        const q = query(collection(db, 'users'), where("uid", "==", uid))
+        const querySnapshot = await getDocs(q)
+        if (!querySnapshot) {
+            reject(new Error('Данных пользователя нет'))
+        }
+        querySnapshot.forEach((snap)=>{
+            //console.log(snap.data())
+            user.name = snap.data().name
+            user.profileUrl = snap.data().profileUrl
+        })
+        resolve(user)
+    })
+}
 
 
 
